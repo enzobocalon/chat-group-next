@@ -7,7 +7,7 @@ export const httpClient = axios.create({
 });
 
 function getChatTokenCookie() {
-  const cookieName = 'chat%3Atoken=';
+  const cookieName = APP_CONFIG.ACCESS_TOKEN + '=';
   const cookies = document.cookie.split(';');
 
   for (let i = 0; i < cookies.length; i++) {

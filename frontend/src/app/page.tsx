@@ -75,7 +75,7 @@ export default function Home() {
             {...register('password')}
           />
         </div>
-        <Button>Login</Button>
+        <Button type="submit">Login</Button>
       </form>
       <p className="text-white mt-4">
         Don&apos;t have an account yet?{' '}
