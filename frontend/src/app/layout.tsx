@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { Noto_Sans } from 'next/font/google';
 import './globals.css';
 import { cn } from '@/utils/cn';
+import Providers from '@/components/Providers';
+import { cookies } from 'next/headers';
 
 const font = Noto_Sans({
   subsets: ['latin'],
@@ -23,7 +25,7 @@ export default function RootLayout({
       <body
         className={cn('min-h-screen antialiased min-w-screen', font.className)}
       >
-        {children}
+        <Providers cookies={cookies().getAll()}>{children}</Providers>
       </body>
     </html>
   );
