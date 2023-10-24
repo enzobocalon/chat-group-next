@@ -12,7 +12,7 @@ export default function Button({ children, className, ...props }: ButtonProps) {
     <button
       {...props}
       className={cn(
-        'w-full bg-[#2F80ED] p-4 rounded-lg text-white hover:opacity-95 transition-all',
+        'w-full flex items-center justify-center bg-[#2F80ED] p-4 rounded-lg text-white hover:opacity-95 transition-all',
         className
       )}
     >

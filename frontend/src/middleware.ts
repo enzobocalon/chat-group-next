@@ -35,6 +35,11 @@ export async function middleware(request: NextRequest) {
       if (!isValidToken) {
         return NextResponse.redirect(`${baseUrl}/`);
       }
+      const userData = new Headers(request.headers);
+      userData.set('X-User', JSON.stringify(isValidToken));
+      return NextResponse.next({
+        headers: userData,
+      });
     }
     return NextResponse.next();
   } else {

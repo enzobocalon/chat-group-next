@@ -1,4 +1,4 @@
-import type { Config } from 'tailwindcss'
+import type { Config } from 'tailwindcss';
 
 const config: Config = {
   content: [
@@ -8,21 +8,22 @@ const config: Config = {
   ],
   theme: {
     fontFamily: {
-      sans: ['"Noto Sans"', '"sans-serif"']
+      sans: ['"Noto Sans"', '"sans-serif"'],
     },
     extend: {
       colors: {
         app: {
           DEFAULT: '#252329',
           background: '#120F13',
-          foreground: '#0B090C'
-        }
+          foreground: '#0B090C',
+        },
       },
       boxShadow: {
-        '3xl': '0px 4px 4px 0px rgba(0, 0, 0, 0.25)'
-      }
+        '3xl': '0px 4px 4px 0px rgba(0, 0, 0, 0.25)',
+        '2md': '0px 2px 4px 0px rgba(0, 0, 0, 0.05)',
+      },
     },
   },
   plugins: [],
-}
-export default config
+};
+export default config;

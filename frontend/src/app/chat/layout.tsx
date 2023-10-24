@@ -1,9 +1,17 @@
 import Sidebar from '@/components/Sidebar';
+import { headers } from 'next/headers';
+import { ReactNode } from 'react';
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+interface LayoutProps {
+  children: ReactNode;
+}
+
+export default function Layout({ children }: LayoutProps) {
+  const headersList = headers();
+  const user = JSON.parse(headersList.get('X-User') as string);
   return (
     <div className="flex w-full h-screen">
-      <Sidebar />
+      <Sidebar user={user} />
       {children}
     </div>
   );
