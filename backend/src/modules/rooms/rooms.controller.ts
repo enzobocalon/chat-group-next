@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   ParseUUIDPipe,
+  Query,
 } from '@nestjs/common';
 import { RoomsService } from './rooms.service';
 import { ActiveUserId } from 'src/shared/decorators/ActiveUserId';
@@ -24,12 +25,22 @@ export class RoomsController {
     return this.roomsService.listRoomById(id);
   }
 
+  @Get('filter')
+  listRoomByName(@Query('name') roomName: string) {
+    return this.roomsService.listRoomByName(roomName);
+  }
+
+  @Get('/members/:id')
+  listMembersByRoom(@Param('id', ParseUUIDPipe) id: string) {
+    return this.roomsService.listMembersByRoom(id);
+  }
+
   @Post('create')
   createRoom(@ActiveUserId() userId: string, @Body() roomDto: RoomsDto) {
     return this.roomsService.create(userId, roomDto);
   }
 
-  @Post('join:id')
+  @Post('join/:id')
   joinRoom(
     @ActiveUserId() userId: string,
     @Param('id', ParseUUIDPipe) roomId: string,
@@ -37,7 +48,7 @@ export class RoomsController {
     return this.roomsService.joinRoom(userId, roomId);
   }
 
-  @Post('left:id')
+  @Post('left/:id')
   leftRoom(
     @ActiveUserId() userId: string,
     @Param('id', ParseUUIDPipe) roomId: string,

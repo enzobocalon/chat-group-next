@@ -20,9 +20,18 @@ export class RoomsService {
       where: {
         userId: userId,
       },
+      select: {
+        room: {
+          select: {
+            id: true,
+            name: true,
+            description: true,
+          },
+        },
+      },
     });
 
-    return rooms;
+    return rooms.map((room) => room.room);
   }
 
   async listRoomById(id: string) {
@@ -36,6 +45,37 @@ export class RoomsService {
 
     if (!room) throw new NotFoundException('Room not found');
     return room;
+  }
+
+  async listMembersByRoom(id: string) {
+    const members = await this.roomsRepo.findManyRoomUsers({
+      where: {
+        roomsId: id,
+      },
+      select: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            avatar: true,
+          },
+        },
+      },
+    });
+
+    return members.map((data) => data.user);
+  }
+
+  async listRoomByName(name: string) {
+    const rooms = await this.roomsRepo.findMany({
+      where: {
+        name: {
+          contains: name,
+        },
+      },
+    });
+
+    return rooms;
   }
 
   async create(userId: string, roomDto: RoomsDto) {

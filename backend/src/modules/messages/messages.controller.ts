@@ -22,7 +22,7 @@ export class MessagesController {
     return this.messagesService.listMessagesByRoom(userId, roomId);
   }
 
-  @Post('create:id')
+  @Post('create/:id')
   create(
     @ActiveUserId() userId: string,
     @Param('id', ParseUUIDPipe) roomId: string,
