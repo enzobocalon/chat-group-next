@@ -6,6 +6,5 @@ export class RoomsDto {
   name: string;
 
   @IsString()
-  @IsNotEmpty()
   description: string;
 }

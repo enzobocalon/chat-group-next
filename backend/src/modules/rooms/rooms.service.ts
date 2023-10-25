@@ -20,9 +20,6 @@ export class RoomsService {
       where: {
         userId: userId,
       },
-      include: {
-        room: true,
-      },
     });
 
     return rooms;
@@ -52,13 +49,23 @@ export class RoomsService {
         description,
         ownerId: userId,
       },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+      },
     });
 
     if (!room) throw new InternalServerErrorException('Error creating room');
 
-    return {
-      roomId: room.id,
-    };
+    await this.roomsRepo.createUserRoom({
+      data: {
+        userId,
+        roomsId: room.id,
+      },
+    });
+
+    return room;
   }
 
   async joinRoom(userId: string, roomId: string) {
