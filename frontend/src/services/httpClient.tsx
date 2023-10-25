@@ -1,4 +1,5 @@
 import { APP_CONFIG } from '@/config';
+import { sleep } from '@/utils/sleep';
 import axios from 'axios';
 
 const isServer = typeof window === 'undefined';
@@ -35,6 +36,12 @@ httpClient.interceptors.request.use(async (config) => {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
   }
+
+  return config;
+});
+
+httpClient.interceptors.request.use(async (config) => {
+  await sleep(1000);
 
   return config;
 });

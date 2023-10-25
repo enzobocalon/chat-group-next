@@ -12,6 +12,7 @@ import { usersService } from '@/services/users';
 import { APP_CONFIG } from '@/config';
 import { useCookies } from 'next-client-cookies';
 import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 interface AuthContextValue {
   signedIn: boolean;
@@ -44,6 +45,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         sameSite: 'strict',
       });
       setSignedIn(true);
+      toast.success('You are now signed in');
       router.replace('/chat');
     },
     [cookies, router]
@@ -52,6 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signout = useCallback(() => {
     cookies.remove(APP_CONFIG.ACCESS_TOKEN);
     setSignedIn(false);
+    toast.success('You are now signed out');
     router.replace('/');
   }, [cookies, router]);
 

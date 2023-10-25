@@ -8,15 +8,15 @@ import { useCallback, useState } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { CreateRoomParams } from '@/services/rooms/create';
 import { roomsService } from '@/services/rooms';
 import { IRoom } from '@/types/Room';
+import toast from 'react-hot-toast';
 
 interface Props {
   hasChat: boolean;
   onToggle: () => void;
-  onCreate: (room: IRoom) => void;
 }
 
 const schema = z.object({
@@ -26,12 +26,15 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
-export default function TopMenu({ hasChat, onToggle, onCreate }: Props) {
+export default function TopMenu({ hasChat, onToggle }: Props) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const queryClient = useQueryClient();
+
   const {
     register,
     handleSubmit: hookFormHandleSubmit,
     formState: { errors },
+    reset,
   } = useForm<FormData>({
     resolver: zodResolver(schema),
   });
@@ -41,12 +44,19 @@ export default function TopMenu({ hasChat, onToggle, onCreate }: Props) {
     mutationFn: async (data: CreateRoomParams) => {
       return roomsService.create(data);
     },
+    onSuccess: (data) => {
+      setIsModalOpen(false);
+      queryClient.setQueryData(['rooms'], (prev: IRoom[]) => {
+        return [...prev, data];
+      });
+      reset();
+    },
   });
 
   const handleSubmit = hookFormHandleSubmit(async (data) => {
     try {
-      const response = await mutateAsync(data);
-      onCreate(response);
+      await mutateAsync(data);
+      toast.success('Channel created successfully');
     } catch (e) {
       console.log(e);
     }

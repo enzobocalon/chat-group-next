@@ -1,16 +1,15 @@
 'use client';
 
-import { ChevronDownIcon } from '@radix-ui/react-icons';
 import UserCard from '../UserCard';
 import CurrentChatSidebar from './components/CurrentChatSidebar';
 import TopMenu from './components/TopMenu';
 import DefaultSidebar from './components/DefaultSidebar';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { IUser } from '@/types/User';
 import Actions from './components/Actions';
-import { IRoom } from '@/types/Room';
 import { useQuery } from '@tanstack/react-query';
 import { roomsService } from '@/services/rooms';
+import { usePathname } from 'next/navigation';
 
 interface Props {
   user: IUser;
@@ -18,18 +17,12 @@ interface Props {
 
 export default function Sidebar({ user }: Props) {
   const [isChatActive, setIsChatActive] = useState(false);
-  const [rooms, setRooms] = useState<IRoom[]>([]);
+  const pathname = usePathname();
 
-  const handleAddRoom = useCallback((room: IRoom) => {
-    setRooms((prev) => [...prev, room]);
-  }, []);
-
-  useQuery({
+  const { data } = useQuery({
     queryKey: ['rooms'],
     queryFn: async () => {
-      const response = await roomsService.get();
-      setRooms(response);
-      return response;
+      return roomsService.get();
     },
     staleTime: 1000 * 60 * 60 * 15,
   });
@@ -39,18 +32,20 @@ export default function Sidebar({ user }: Props) {
     setIsChatActive((prev) => !prev);
   }, [isChatActive]);
 
+  useEffect(() => {
+    if (pathname.split('/')[2]) {
+      setIsChatActive(true);
+    }
+  }, [pathname]);
+
   return (
     <aside className="flex flex-col max-w-sm w-full bg-app-background">
-      <TopMenu
-        hasChat={isChatActive}
-        onToggle={handleSidebarStatus}
-        onCreate={handleAddRoom}
-      />
+      <TopMenu hasChat={isChatActive} onToggle={handleSidebarStatus} />
       <div className="p-8 text-white flex flex-col flex-1">
         {isChatActive ? (
           <CurrentChatSidebar />
         ) : (
-          <DefaultSidebar rooms={rooms} />
+          <DefaultSidebar rooms={data} />
         )}
       </div>
 

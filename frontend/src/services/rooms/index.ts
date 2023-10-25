@@ -1,5 +1,7 @@
 import create from './create';
 import get from './get';
+import getById from './getById';
+import getMembers from './getMembers';
 
 export interface RoomResponse {
   id: string;
@@ -10,4 +12,6 @@ export interface RoomResponse {
 export const roomsService = {
   create,
   get,
+  getMembers,
+  getById,
 };

@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from '@/context/AuthContext';
 import { RequestCookie } from 'next/dist/compiled/@edge-runtime/cookies';
 import { CookiesProvider } from 'next-client-cookies';
+import { Toaster } from 'react-hot-toast';
 
 interface ProvidersProps {
   children: ReactNode;
@@ -24,6 +25,7 @@ const Providers: FC<ProvidersProps> = ({ children, cookies }) => {
   return (
     <CookiesProvider value={cookies}>
       <QueryClientProvider client={queryClient}>
+        <Toaster />
         <AuthProvider>{children}</AuthProvider>
       </QueryClientProvider>
     </CookiesProvider>

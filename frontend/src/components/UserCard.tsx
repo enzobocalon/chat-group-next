@@ -7,11 +7,10 @@ interface UserCardProps {
 }
 
 export default function UserCard({ user }: UserCardProps) {
-  console.log(user);
   return (
     <div className="flex text-white items-center w-full gap-7">
       <Image
-        src={placeholderImg}
+        src={user.avatar || placeholderImg}
         alt="imagePlaceholder"
         className="max-w-[42px] max-h-[42px]"
       />
