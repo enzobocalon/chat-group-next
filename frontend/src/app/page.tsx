@@ -12,11 +12,8 @@ import { SigninParams } from '@/services/auth/signin';
 import { useAuth } from '@/hooks/useAuth';
 
 const schema = z.object({
-  email: z
-    .string()
-    .min(1, 'E-mail é obrigatório')
-    .email('Informe um E-mail válido'),
-  password: z.string().min(8, 'Senha é obrigatória'),
+  email: z.string().min(1, 'E-mail is required').email('E-mail is not valid'),
+  password: z.string().min(8, 'Password must have at least 8 characters'),
 });
 
 type FormData = z.infer<typeof schema>;

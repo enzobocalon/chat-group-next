@@ -5,14 +5,52 @@ import Modal from '@/components/Modal';
 import { Textarea } from '@/components/Textarea';
 import { ChevronLeftIcon, PlusIcon } from '@radix-ui/react-icons';
 import { useCallback, useState } from 'react';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
+import { CreateRoomParams } from '@/services/rooms/create';
+import { roomsService } from '@/services/rooms';
+import { IRoom } from '@/types/Room';
 
 interface Props {
   hasChat: boolean;
   onToggle: () => void;
+  onCreate: (room: IRoom) => void;
 }
 
-export default function TopMenu({ hasChat, onToggle }: Props) {
+const schema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  description: z.string(),
+});
+
+type FormData = z.infer<typeof schema>;
+
+export default function TopMenu({ hasChat, onToggle, onCreate }: Props) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const {
+    register,
+    handleSubmit: hookFormHandleSubmit,
+    formState: { errors },
+  } = useForm<FormData>({
+    resolver: zodResolver(schema),
+  });
+
+  const { isPending, mutateAsync } = useMutation({
+    mutationKey: ['createChannel'],
+    mutationFn: async (data: CreateRoomParams) => {
+      return roomsService.create(data);
+    },
+  });
+
+  const handleSubmit = hookFormHandleSubmit(async (data) => {
+    try {
+      const response = await mutateAsync(data);
+      onCreate(response);
+    } catch (e) {
+      console.log(e);
+    }
+  });
 
   const toggleModalStatus = useCallback(() => {
     setIsModalOpen((prev) => !prev);
@@ -46,16 +84,23 @@ export default function TopMenu({ hasChat, onToggle }: Props) {
       )}
       <Modal
         title="New Channel"
-        onConfirm={() => console.log('teste')}
+        onConfirm={handleSubmit}
         isOpen={isModalOpen}
         onClose={toggleModalStatus}
+        isLoading={isPending}
         className="w-full flex flex-col h-full max-w-[656px] max-h-[360px]"
       >
         <form className="flex flex-col flex-1 gap-4">
-          <Input placeholder="Channel name" />
+          <Input
+            placeholder="Channel name"
+            {...register('name')}
+            error={errors.name?.message}
+          />
           <Textarea
+            {...register('description')}
             placeholder="Channel Description"
             className="flex-1 h-full"
+            error={errors.description?.message}
           />
         </form>
       </Modal>

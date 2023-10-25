@@ -7,9 +7,11 @@ import { ChevronDownIcon, ExitIcon } from '@radix-ui/react-icons';
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { cn } from '@/utils/cn';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function Actions() {
   const [isOpen, setIsOpen] = useState(false);
+  const { signout } = useAuth();
   return (
     <div className="relative w-full flex items-center justify-end">
       <div className="flex items-center justify-center">
@@ -41,7 +43,10 @@ export default function Actions() {
 
             <Separator className="lg: min-w-[164px]" />
 
-            <div className="hover:bg-[#3C393F] text-[#EB5757] w-full shadow-2md flex items-center gap-2 p-2 rounded-lg cursor-pointer">
+            <div
+              onClick={signout}
+              className="hover:bg-[#3C393F] text-[#EB5757] w-full shadow-2md flex items-center gap-2 p-2 rounded-lg cursor-pointer"
+            >
               <ExitIcon />
               <span>Logout</span>
             </div>

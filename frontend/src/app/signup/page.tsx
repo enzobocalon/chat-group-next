@@ -12,12 +12,9 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const schema = z.object({
-  name: z.string().min(1, 'Nome é obrigatório'),
-  email: z
-    .string()
-    .min(1, 'E-mail é obrigatório')
-    .email('Informe um E-mail válido'),
-  password: z.string().min(8, 'Senha é obrigatória'),
+  name: z.string().min(1, 'Name is required'),
+  email: z.string().min(1, 'E-mail is required').email('E-mail is not valid'),
+  password: z.string().min(8, 'Password must have at least 8 characters'),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -35,12 +32,7 @@ export default function Register() {
   const { mutateAsync } = useMutation({
     mutationKey: ['signup'],
     mutationFn: async (data: SignupParams) => {
-      try {
-        const response = await authService.signup(data);
-        return response;
-      } catch (error) {
-        throw error; // Re-throw the error to let React Query handle it
-      }
+      return authService.signup(data);
     },
   });
 

@@ -1,8 +1,13 @@
 import { Input } from '@/components/Input';
 import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
 import ChatList from './ChatList';
+import { IRoom } from '@/types/Room';
 
-export default function DefaultSidebar() {
+interface DefaultSidebarProps {
+  rooms: IRoom[];
+}
+
+export default function DefaultSidebar({ rooms }: DefaultSidebarProps) {
   return (
     <>
       <Input placeholder="Search by chat id...">
@@ -10,12 +15,7 @@ export default function DefaultSidebar() {
       </Input>
 
       <div className="flex flex-col gap-7 mt-6">
-        <ChatList />
-        <ChatList />
-        <ChatList />
-        <ChatList />
-        <ChatList />
-        <ChatList />
+        {rooms && rooms.map((room) => <ChatList key={room.id} />)}
       </div>
     </>
   );

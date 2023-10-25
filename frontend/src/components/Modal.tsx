@@ -10,6 +10,7 @@ interface ModalProps {
   onConfirm: () => void;
   isOpen: boolean;
   onClose: () => void;
+  isLoading?: boolean;
   children: React.ReactNode;
   className?: string;
 }
@@ -19,6 +20,7 @@ export default function Modal({
   onConfirm,
   onClose,
   isOpen,
+  isLoading,
   className,
   children,
 }: ModalProps) {
@@ -50,6 +52,7 @@ export default function Modal({
                 <Button
                   className="mt-4 max-w-[100px] max-h-[40px]"
                   onClick={onConfirm}
+                  isLoading={isLoading}
                 >
                   Save
                 </Button>
