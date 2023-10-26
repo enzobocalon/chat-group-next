@@ -58,6 +58,21 @@ export class MessagesService {
         roomsId: roomId,
         content,
       },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            avatar: true,
+          },
+        },
+        room: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
     });
 
     if (!message)

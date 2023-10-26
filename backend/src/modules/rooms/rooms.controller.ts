@@ -20,14 +20,14 @@ export class RoomsController {
     return this.roomsService.listRoomsByUser(userId);
   }
 
+  @Get('filters')
+  listRoomByName(@Query('name') name: string) {
+    return this.roomsService.listRoomByName(name);
+  }
+
   @Get(':id')
   listRoomById(@Param('id', ParseUUIDPipe) id: string) {
     return this.roomsService.listRoomById(id);
-  }
-
-  @Get('filter')
-  listRoomByName(@Query('name') roomName: string) {
-    return this.roomsService.listRoomByName(roomName);
   }
 
   @Get('/members/:id')

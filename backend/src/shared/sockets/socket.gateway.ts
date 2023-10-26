@@ -8,7 +8,7 @@ import {
 import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway(0, {
-  namespace: 'app',
+  transports: ['websocket', 'polling'],
   cors: {
     origin: '*',
   },
@@ -27,6 +27,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('joinRoom')
   joinRoom(client: Socket, roomId: string) {
+    console.log('chamou joinRoom');
     client.join(roomId);
     client.emit('joinedRoom', roomId);
   }
@@ -35,10 +36,5 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   leaveRoom(client: Socket, roomId: string) {
     client.leave(roomId);
     client.emit('leftRoom', roomId);
-  }
-
-  @SubscribeMessage('message')
-  createMessage(client: Socket, message: string, roomId: string) {
-    client.in(roomId).emit('message', message);
   }
 }
