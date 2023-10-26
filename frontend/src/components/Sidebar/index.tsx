@@ -9,7 +9,7 @@ import { IUser } from '@/types/User';
 import Actions from './components/Actions';
 import { useQuery } from '@tanstack/react-query';
 import { roomsService } from '@/services/rooms';
-import { usePathname } from 'next/navigation';
+import { useChatId } from '@/hooks/useChatId';
 
 interface Props {
   user: IUser;
@@ -17,7 +17,7 @@ interface Props {
 
 export default function Sidebar({ user }: Props) {
   const [isChatActive, setIsChatActive] = useState(false);
-  const pathname = usePathname();
+  const roomId = useChatId();
 
   const { data } = useQuery({
     queryKey: ['rooms'],
@@ -33,10 +33,10 @@ export default function Sidebar({ user }: Props) {
   }, [isChatActive]);
 
   useEffect(() => {
-    if (pathname.split('/')[2]) {
+    if (roomId) {
       setIsChatActive(true);
     }
-  }, [pathname]);
+  }, [roomId]);
 
   return (
     <aside className="flex flex-col max-w-sm w-full bg-app-background">

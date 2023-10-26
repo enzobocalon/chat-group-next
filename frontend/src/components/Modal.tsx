@@ -13,6 +13,7 @@ interface ModalProps {
   isLoading?: boolean;
   children: React.ReactNode;
   className?: string;
+  label?: string;
 }
 
 export default function Modal({
@@ -20,6 +21,7 @@ export default function Modal({
   onConfirm,
   onClose,
   isOpen,
+  label = 'Save',
   isLoading,
   className,
   children,
@@ -54,7 +56,7 @@ export default function Modal({
                   onClick={onConfirm}
                   isLoading={isLoading}
                 >
-                  Save
+                  {label}
                 </Button>
               </div>
             </div>

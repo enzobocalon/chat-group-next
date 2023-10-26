@@ -1,17 +1,8 @@
 import MembersList from './MembersList';
-import { useQuery } from '@tanstack/react-query';
-import { roomsService } from '@/services/rooms';
-import { usePathname } from 'next/navigation';
+import useRoom from '@/hooks/useRoom';
 
 export default function CurrentChatSidebar() {
-  const pathname = usePathname();
-  const { data } = useQuery({
-    queryKey: ['rooms', pathname.split('/')[2]],
-    queryFn: async () => {
-      return roomsService.getById(pathname.split('/')[2]);
-    },
-    staleTime: 1000 * 60 * 60 * 15,
-  });
+  const { data } = useRoom();
 
   return (
     <>

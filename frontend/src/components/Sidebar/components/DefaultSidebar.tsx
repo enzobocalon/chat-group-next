@@ -3,6 +3,7 @@ import { IRoom } from '@/types/Room';
 import Search from './Search';
 import { useCallback, useMemo, useState } from 'react';
 import SearchedRooms from './SearchedRooms';
+import { isUUID } from '@/utils/isUUID';
 
 interface DefaultSidebarProps {
   rooms: IRoom[] | undefined;
@@ -11,14 +12,19 @@ interface DefaultSidebarProps {
 export default function DefaultSidebar({ rooms }: DefaultSidebarProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const handleSearch = useCallback((searchContent: string | undefined) => {
-    if (!searchContent) return;
+    if (!searchContent) {
+      setSearchTerm('');
+      return;
+    }
     setSearchTerm(searchContent);
   }, []);
 
   const filteredRooms = useMemo(() => {
     if (!rooms) return [];
     return rooms.filter((room) =>
-      room.name.toLowerCase().includes(searchTerm.toLowerCase())
+      room[isUUID(searchTerm) ? 'id' : 'name']
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
     );
   }, [rooms, searchTerm]);
 

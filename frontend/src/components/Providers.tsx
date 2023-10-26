@@ -6,6 +6,7 @@ import { AuthProvider } from '@/context/AuthContext';
 import { RequestCookie } from 'next/dist/compiled/@edge-runtime/cookies';
 import { CookiesProvider } from 'next-client-cookies';
 import { Toaster } from 'react-hot-toast';
+import { SocketProvider } from '@/context/SocketContext';
 
 interface ProvidersProps {
   children: ReactNode;
@@ -26,7 +27,9 @@ const Providers: FC<ProvidersProps> = ({ children, cookies }) => {
     <CookiesProvider value={cookies}>
       <QueryClientProvider client={queryClient}>
         <Toaster />
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <SocketProvider>{children}</SocketProvider>
+        </AuthProvider>
       </QueryClientProvider>
     </CookiesProvider>
   );

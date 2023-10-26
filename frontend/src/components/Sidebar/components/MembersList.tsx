@@ -1,15 +1,15 @@
 'use client';
 import UserCard from '@/components/UserCard';
+import { useChatId } from '@/hooks/useChatId';
 import { roomsService } from '@/services/rooms';
 import { useQuery } from '@tanstack/react-query';
-import { usePathname } from 'next/navigation';
 
 export default function MembersList() {
-  const pathname = usePathname();
+  const roomId = useChatId();
   const { data } = useQuery({
-    queryKey: ['members', pathname.split('/')[2]],
+    queryKey: ['members', roomId],
     queryFn: async () => {
-      return roomsService.getMembers(pathname.split('/')[2]);
+      return roomsService.getMembers(roomId);
     },
     staleTime: 1000 * 60 * 60 * 15,
   });
