@@ -3,6 +3,7 @@
 import ChatHeader from '@/components/ChatHeader';
 import { Input } from '@/components/Input';
 import MessageCard from '@/components/MessageCard';
+import MessageLoader from '@/components/MessageLoader';
 import useRoom from '@/hooks/useRoom';
 import { useSocket } from '@/hooks/useSocket';
 import { messagesService } from '@/services/messages';
@@ -17,8 +18,9 @@ export default function Page() {
   const { data, roomId } = useRoom();
   const queryClient = useQueryClient();
   const { socket } = useSocket();
+  const loaderArray = [...Array(8)];
 
-  const { data: messages } = useQuery({
+  const { data: messages, isLoading } = useQuery({
     queryKey: ['messages', roomId],
     queryFn: async () => {
       return messagesService.get(roomId);
@@ -43,16 +45,21 @@ export default function Page() {
     },
   });
 
-  const createMessage = useCallback(
-    async (e: KeyboardEvent<HTMLInputElement>) => {
+  const createMessage = useCallback(async () => {
+    if (!inputValue.current) return;
+    if (!inputValue.current.value) return;
+    await mutateAsync();
+    inputValue.current.value = '';
+  }, [mutateAsync]);
+
+  const handleOnCreateEnter = useCallback(
+    (e: KeyboardEvent<HTMLInputElement>) => {
       if (e.key !== 'Enter') return;
-      if (!inputValue.current) return;
-      if (!inputValue.current.value) return;
-      await mutateAsync();
-      inputValue.current.value = '';
+      createMessage();
     },
-    [mutateAsync]
+    [createMessage]
   );
+
   useEffect(() => {
     socket?.on('message', (newMessage: IMessage) => {
       console.log('teste');
@@ -75,22 +82,27 @@ export default function Page() {
   return (
     <div className="bg-app w-full text-white flex flex-col">
       <ChatHeader name={data?.name} />
-      <div className="px-20 py-10 h-full w-full flex flex-col">
-        <div className="w-full h-full flex-1 overflow-y-auto">
-          {messages &&
-            messages.map((message) => (
-              <MessageCard key={message.id} message={message} />
-            ))}
+      <div className="h-full w-full flex flex-col overflow-auto no-scrollbar">
+        <div className="px-20 py-4 w-full h-full overflow-y-auto flex flex-col gap-4 no-scrollbar">
+          {isLoading
+            ? loaderArray.map((_, index) => <MessageLoader key={index} />)
+            : messages &&
+              messages.map((message) => (
+                <MessageCard key={message.id} message={message} />
+              ))}
         </div>
 
-        <Input
-          onKeyDown={createMessage}
-          ref={inputValue}
-          isIconButton
-          placeholder="Type a message here..."
-        >
-          <PaperPlaneIcon />
-        </Input>
+        <div className="mx-20 my-6">
+          <Input
+            onKeyDown={handleOnCreateEnter}
+            ref={inputValue}
+            isIconButton
+            placeholder="Type a message here..."
+            onConfirm={createMessage}
+          >
+            <PaperPlaneIcon />
+          </Input>
+        </div>
       </div>
     </div>
   );

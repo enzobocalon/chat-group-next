@@ -7,6 +7,7 @@ import { RequestCookie } from 'next/dist/compiled/@edge-runtime/cookies';
 import { CookiesProvider } from 'next-client-cookies';
 import { Toaster } from 'react-hot-toast';
 import { SocketProvider } from '@/context/SocketContext';
+import { SkeletonTheme } from 'react-loading-skeleton';
 
 interface ProvidersProps {
   children: ReactNode;
@@ -28,7 +29,11 @@ const Providers: FC<ProvidersProps> = ({ children, cookies }) => {
       <QueryClientProvider client={queryClient}>
         <Toaster />
         <AuthProvider>
-          <SocketProvider>{children}</SocketProvider>
+          <SocketProvider>
+            <SkeletonTheme baseColor="#202020" highlightColor="#252329">
+              {children}
+            </SkeletonTheme>
+          </SocketProvider>
         </AuthProvider>
       </QueryClientProvider>
     </CookiesProvider>

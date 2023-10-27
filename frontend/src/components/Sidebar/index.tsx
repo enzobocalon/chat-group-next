@@ -19,7 +19,7 @@ export default function Sidebar({ user }: Props) {
   const [isChatActive, setIsChatActive] = useState(false);
   const roomId = useChatId();
 
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['rooms'],
     queryFn: async () => {
       return roomsService.get();
@@ -41,11 +41,11 @@ export default function Sidebar({ user }: Props) {
   return (
     <aside className="flex flex-col max-w-sm w-full bg-app-background">
       <TopMenu hasChat={isChatActive} onToggle={handleSidebarStatus} />
-      <div className="p-8 text-white flex flex-col flex-1">
+      <div className="p-8 text-white flex flex-col flex-1 w-full">
         {isChatActive ? (
           <CurrentChatSidebar />
         ) : (
-          <DefaultSidebar rooms={data} />
+          <DefaultSidebar rooms={data} isLoading={isLoading} />
         )}
       </div>
 

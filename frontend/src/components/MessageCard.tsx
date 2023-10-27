@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import placeholderImg from '../assets/userPlaceholder.png';
 import { IMessage } from '@/types/Message';
+import { dateFormat } from '@/utils/dateFormat';
 
 interface MessageCardProps {
   message: IMessage;
@@ -20,7 +21,7 @@ export default function MessageCard({ message }: MessageCardProps) {
             {message.user.name}
           </strong>
           <span className="tracking-[-0.49px] text-[14px]">
-            yesterday at 2:29pm
+            {dateFormat(message.createdAt)}
           </span>
         </div>
 

@@ -8,10 +8,11 @@ interface InputProps extends ComponentProps<'input'> {
   children?: React.ReactNode;
   isIconButton?: boolean;
   error?: string;
+  onConfirm?: () => void;
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ children, isIconButton, error, className, ...props }, ref) => {
+  ({ children, isIconButton, error, onConfirm, className, ...props }, ref) => {
     return (
       <div>
         <div className="bg-[#3C393F] rounded-lg flex items-center px-2">
@@ -25,7 +26,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
           />
           {children && isIconButton && (
-            <button className="bg-[#2F80ED] p-3 rounded-lg">{children}</button>
+            <button className="bg-[#2F80ED] p-3 rounded-lg" onClick={onConfirm}>
+              {children}
+            </button>
           )}
         </div>
         {error && (

@@ -4,6 +4,7 @@ import './globals.css';
 import { cn } from '@/utils/cn';
 import Providers from '@/components/Providers';
 import { cookies } from 'next/headers';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 const font = Noto_Sans({
   subsets: ['latin'],
@@ -23,7 +24,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={cn('min-h-screen antialiased min-w-screen', font.className)}
+        className={cn(
+          'min-h-screen antialiased min-w-screen overflow-hidden',
+          font.className
+        )}
       >
         <Providers cookies={cookies().getAll()}>{children}</Providers>
       </body>

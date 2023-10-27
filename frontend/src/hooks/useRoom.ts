@@ -4,7 +4,7 @@ import { roomsService } from '@/services/rooms';
 
 export default function useRoom() {
   const roomId = useChatId();
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['rooms', roomId],
     queryFn: async () => {
       return roomsService.getById(roomId);
@@ -15,5 +15,6 @@ export default function useRoom() {
   return {
     roomId,
     data,
+    isLoading,
   };
 }
