@@ -2,12 +2,13 @@ import {
   BadRequestException,
   InternalServerErrorException,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { MessagesRepository } from 'src/shared/database/repositories/messages.repositories';
 import { RoomsRepository } from 'src/shared/database/repositories/rooms.repositories';
 import { MessageDto } from './dto/MessageDto';
 import { SocketGateway } from 'src/shared/sockets/socket.gateway';
-
+import { MessageWithRoom } from 'src/shared/types/MessageWithRoom';
 @Injectable()
 export class MessagesService {
   constructor(
@@ -80,5 +81,33 @@ export class MessagesService {
 
     this.socketGateway.server.to(roomId).emit('message', message);
     return message;
+  }
+
+  async delete(userId: string, messageId: string) {
+    const message = (await this.messagesRepo.findUnique({
+      where: {
+        id: messageId,
+      },
+      include: {
+        room: true,
+      },
+    })) as MessageWithRoom;
+
+    if (!message) throw new NotFoundException('Message not found');
+
+    if (message.userId !== userId || message.room.ownerId !== userId) {
+      throw new BadRequestException('Cannot delete');
+    }
+
+    const deletedMessage = await this.messagesRepo.deleteById({
+      where: {
+        id: messageId,
+      },
+    });
+
+    this.socketGateway.server
+      .to(message.room.id)
+      .emit('deletedMessage', messageId);
+    return deletedMessage;
   }
 }

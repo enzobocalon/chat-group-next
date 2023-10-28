@@ -7,6 +7,7 @@ import {
 import { RoomsRepository } from 'src/shared/database/repositories/rooms.repositories';
 import { SocketGateway } from 'src/shared/sockets/socket.gateway';
 import { RoomsDto } from './dto/RoomsDto';
+import { RoomUsersPopulated } from 'src/shared/types/RoomUsersPopulated';
 
 @Injectable()
 export class RoomsService {
@@ -16,7 +17,7 @@ export class RoomsService {
   ) {}
 
   async listRoomsByUser(userId: string) {
-    const rooms = await this.roomsRepo.findManyRoomUsers({
+    const rooms = (await this.roomsRepo.findManyRoomUsers({
       where: {
         userId: userId,
       },
@@ -29,7 +30,7 @@ export class RoomsService {
           },
         },
       },
-    });
+    })) as RoomUsersPopulated[];
 
     return rooms.map((room) => room.room);
   }
@@ -48,7 +49,7 @@ export class RoomsService {
   }
 
   async listMembersByRoom(id: string) {
-    const members = await this.roomsRepo.findManyRoomUsers({
+    const members = (await this.roomsRepo.findManyRoomUsers({
       where: {
         roomsId: id,
       },
@@ -61,7 +62,7 @@ export class RoomsService {
           },
         },
       },
-    });
+    })) as RoomUsersPopulated[];
 
     return members.map((data) => data.user);
   }

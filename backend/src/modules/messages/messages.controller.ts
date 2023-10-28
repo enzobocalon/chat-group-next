@@ -5,6 +5,7 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
+  Delete,
 } from '@nestjs/common';
 import { MessagesService } from './messages.service';
 import { ActiveUserId } from 'src/shared/decorators/ActiveUserId';
@@ -29,5 +30,13 @@ export class MessagesController {
     @Body() data: MessageDto,
   ) {
     return this.messagesService.create(userId, roomId, data);
+  }
+
+  @Delete('/delete/:id')
+  delete(
+    @ActiveUserId() userId: string,
+    @Param('id', ParseUUIDPipe) messageId: string,
+  ) {
+    return this.messagesService.delete(userId, messageId);
   }
 }

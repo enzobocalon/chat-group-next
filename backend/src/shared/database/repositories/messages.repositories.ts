@@ -17,4 +17,8 @@ export class MessagesRepository {
   findMany(findMany: Prisma.MessagesFindManyArgs) {
     return this.prismaService.messages.findMany(findMany);
   }
+
+  deleteById(deleteById: Prisma.MessagesDeleteArgs) {
+    return this.prismaService.messages.delete(deleteById);
+  }
 }

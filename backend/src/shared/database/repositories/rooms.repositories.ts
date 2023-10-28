@@ -18,15 +18,8 @@ export class RoomsRepository {
     return this.prismaService.rooms.findMany(findMany);
   }
 
-  findManyRoomUsers<
-    T = Prisma.RoomsUsersGetPayload<{
-      include: {
-        room: true;
-        user: true;
-      };
-    }>,
-  >(findMany: Prisma.SelectSubset<T, Prisma.RoomsUsersFindManyArgs>) {
-    return this.prismaService.roomsUsers.findMany<T>(findMany);
+  findManyRoomUsers(findMany: Prisma.RoomsUsersFindManyArgs) {
+    return this.prismaService.roomsUsers.findMany(findMany);
   }
 
   createUserRoom(createDto: Prisma.RoomsUsersCreateArgs) {
