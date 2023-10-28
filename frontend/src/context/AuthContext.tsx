@@ -13,11 +13,13 @@ import { APP_CONFIG } from '@/config';
 import { useCookies } from 'next-client-cookies';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import { IUser } from '@/types/User';
 
 interface AuthContextValue {
   signedIn: boolean;
   signin(accessToken: string): void;
   signout(): void;
+  user: IUser | undefined;
 }
 
 export const AuthContext = createContext({} as AuthContextValue);
@@ -30,7 +32,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   });
   const router = useRouter();
 
-  const { isError, isSuccess } = useQuery({
+  const { isError, isSuccess, data } = useQuery({
     queryKey: ['users', 'me'],
     queryFn: () => usersService.me(),
     enabled: signedIn,
@@ -69,6 +71,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         signedIn: isSuccess && signedIn,
         signin,
         signout,
+        user: data,
       }}
     >
       {children}

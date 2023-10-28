@@ -37,7 +37,7 @@ export default function Page() {
     [queryClient, roomId]
   );
 
-  const { mutateAsync } = useMutation({
+  const { mutateAsync: submitCreateMessage } = useMutation({
     mutationKey: ['create-message', roomId],
     mutationFn: async () => {
       if (!inputValue.current) return;
@@ -48,9 +48,9 @@ export default function Page() {
   const createMessage = useCallback(async () => {
     if (!inputValue.current) return;
     if (!inputValue.current.value) return;
-    await mutateAsync();
+    await submitCreateMessage();
     inputValue.current.value = '';
-  }, [mutateAsync]);
+  }, [submitCreateMessage]);
 
   const handleOnCreateEnter = useCallback(
     (e: KeyboardEvent<HTMLInputElement>) => {
@@ -62,7 +62,6 @@ export default function Page() {
 
   useEffect(() => {
     socket?.on('message', (newMessage: IMessage) => {
-      console.log('teste');
       addNewMessage(newMessage);
     });
 
@@ -88,7 +87,7 @@ export default function Page() {
             ? loaderArray.map((_, index) => <MessageLoader key={index} />)
             : messages &&
               messages.map((message) => (
-                <MessageCard key={message.id} message={message} />
+                <MessageCard key={message.id} message={message} room={data} />
               ))}
         </div>
 

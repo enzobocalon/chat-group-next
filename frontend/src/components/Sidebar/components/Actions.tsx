@@ -8,9 +8,11 @@ import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { cn } from '@/utils/cn';
 import { useAuth } from '@/hooks/useAuth';
+import { useClickOutside } from '@/hooks/useClickOutside';
 
 export default function Actions() {
   const [isOpen, setIsOpen] = useState(false);
+  const clickOutside = useClickOutside<HTMLDivElement>(() => setIsOpen(false));
   const { signout } = useAuth();
   return (
     <div className="relative w-full flex items-center justify-end">
@@ -31,6 +33,7 @@ export default function Actions() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2, type: 'fade' }}
             className="flex text-white flex-col gap-2 bg-app px-3 py-4 absolute bottom-8 right-0 rounded-xl"
+            ref={clickOutside}
           >
             <div className="hover:bg-[#3C393F] w-full shadow-2md flex items-center gap-2 p-2 rounded-lg cursor-pointer">
               <AccountCircle />

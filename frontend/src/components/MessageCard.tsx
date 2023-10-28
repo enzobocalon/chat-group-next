@@ -2,14 +2,27 @@ import Image from 'next/image';
 import placeholderImg from '../assets/userPlaceholder.png';
 import { IMessage } from '@/types/Message';
 import { dateFormat } from '@/utils/dateFormat';
+import { IRoom } from '@/types/Room';
+import { useAuth } from '@/hooks/useAuth';
+import MessageActions from './MessageActions';
+import { useState } from 'react';
 
 interface MessageCardProps {
   message: IMessage;
+  room?: IRoom;
 }
 
-export default function MessageCard({ message }: MessageCardProps) {
+export default function MessageCard({ message, room }: MessageCardProps) {
+  const { user } = useAuth();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const canBeDeleted =
+    user?.id === message.user.id || room?.ownerId === user?.id;
+  function toggleDropdown() {
+    setIsDropdownOpen((prev) => !prev);
+  }
+
   return (
-    <div className="flex gap-7">
+    <div className="flex gap-7 relative group">
       <Image
         src={placeholderImg}
         alt="imagePlaceholder"
@@ -27,6 +40,10 @@ export default function MessageCard({ message }: MessageCardProps) {
 
         <p>{message.content}</p>
       </div>
+
+      {canBeDeleted && (
+        <MessageActions isOpen={isDropdownOpen} onToggle={toggleDropdown} />
+      )}
     </div>
   );
 }

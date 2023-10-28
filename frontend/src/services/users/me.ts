@@ -1,12 +1,8 @@
+import { IUser } from '@/types/User';
 import { httpClient } from '../httpClient';
 
-interface MeResponse {
-  name: string;
-  email: string;
-}
-
 export default async function me() {
-  const { data } = await httpClient.get<MeResponse>('/users/me');
+  const { data } = await httpClient.get<IUser>('/users/me');
 
   return data;
 }

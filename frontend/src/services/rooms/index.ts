@@ -9,6 +9,7 @@ export interface RoomResponse {
   id: string;
   name: string;
   description?: string;
+  ownerId: string;
 }
 
 export const roomsService = {
