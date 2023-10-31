@@ -21,4 +21,8 @@ export class MessagesRepository {
   deleteById(deleteById: Prisma.MessagesDeleteArgs) {
     return this.prismaService.messages.delete(deleteById);
   }
+
+  deleteMany(deleteMany: Prisma.MessagesDeleteManyArgs) {
+    return this.prismaService.messages.deleteMany(deleteMany);
+  }
 }

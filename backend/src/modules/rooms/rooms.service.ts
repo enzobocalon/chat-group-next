@@ -8,11 +8,13 @@ import { RoomsRepository } from 'src/shared/database/repositories/rooms.reposito
 import { SocketGateway } from 'src/shared/sockets/socket.gateway';
 import { RoomsDto } from './dto/RoomsDto';
 import { RoomUsersPopulated } from 'src/shared/types/RoomUsersPopulated';
+import { MessagesRepository } from 'src/shared/database/repositories/messages.repositories';
 
 @Injectable()
 export class RoomsService {
   constructor(
     private readonly roomsRepo: RoomsRepository,
+    private readonly messagesRepo: MessagesRepository,
     private readonly socketGateway: SocketGateway,
   ) {}
 
@@ -154,6 +156,29 @@ export class RoomsService {
 
     if (!room) throw new NotFoundException('Room not found');
 
+    if (room.ownerId === userId) {
+      await this.roomsRepo.deleteAllUsersFromRoom({
+        where: {
+          roomsId: roomId,
+        },
+      });
+
+      await this.messagesRepo.deleteMany({
+        where: {
+          roomsId: roomId,
+        },
+      });
+
+      const { id: deletedId } = await this.roomsRepo.deleteRoom({
+        where: {
+          id: roomId,
+        },
+      });
+
+      this.socketGateway.server.to(roomId).emit('deleteRoom', roomId);
+      return deletedId;
+    }
+
     const isUserInRoom = await this.roomsRepo.findManyRoomUsers({
       where: {
         userId,
@@ -161,8 +186,8 @@ export class RoomsService {
       },
     });
 
-    if (isUserInRoom.length > 0)
-      throw new BadRequestException('User already in room');
+    if (!isUserInRoom.length)
+      throw new BadRequestException('User is not in room');
 
     const leftRoom = await this.roomsRepo.leaveUserRoom({
       where: {
@@ -172,7 +197,7 @@ export class RoomsService {
       },
     });
 
-    this.socketGateway.server.to(roomId).emit('leftRoom', roomId);
+    this.socketGateway.server.to(roomId).emit('leftRoom', userId);
     return leftRoom;
   }
 }

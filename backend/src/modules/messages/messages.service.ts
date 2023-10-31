@@ -95,7 +95,7 @@ export class MessagesService {
 
     if (!message) throw new NotFoundException('Message not found');
 
-    if (message.userId !== userId || message.room.ownerId !== userId) {
+    if (message.userId !== userId && message.room.ownerId !== userId) {
       throw new BadRequestException('Cannot delete');
     }
 

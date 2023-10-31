@@ -18,6 +18,10 @@ export class RoomsRepository {
     return this.prismaService.rooms.findMany(findMany);
   }
 
+  deleteRoom(deleteRoom: Prisma.RoomsDeleteArgs) {
+    return this.prismaService.rooms.delete(deleteRoom);
+  }
+
   findManyRoomUsers(findMany: Prisma.RoomsUsersFindManyArgs) {
     return this.prismaService.roomsUsers.findMany(findMany);
   }
@@ -28,5 +32,9 @@ export class RoomsRepository {
 
   leaveUserRoom(deleteDto: Prisma.RoomsUsersDeleteArgs) {
     return this.prismaService.roomsUsers.delete(deleteDto);
+  }
+
+  deleteAllUsersFromRoom(deleteDto: Prisma.RoomsUsersDeleteManyArgs) {
+    return this.prismaService.roomsUsers.deleteMany(deleteDto);
   }
 }
