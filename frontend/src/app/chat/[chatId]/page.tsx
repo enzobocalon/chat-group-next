@@ -45,6 +45,15 @@ export default function Page() {
     },
   });
 
+  const onDeleteMessage = useCallback(
+    (id: string) => {
+      queryClient.setQueryData(['messages', roomId], (prev: IMessage[]) => {
+        return prev.filter((message) => message.id !== id);
+      });
+    },
+    [queryClient, roomId]
+  );
+
   const createMessage = useCallback(async () => {
     if (!inputValue.current) return;
     if (!inputValue.current.value) return;
@@ -77,6 +86,16 @@ export default function Page() {
       socket?.emit('leaveRoom', roomId);
     };
   }, [roomId, socket]);
+
+  useEffect(() => {
+    socket?.on('deletedMessage', (id: string) => {
+      onDeleteMessage(id);
+    });
+
+    return () => {
+      socket?.off('deletedMessage');
+    };
+  }, [onDeleteMessage, socket]);
 
   return (
     <div className="bg-app w-full text-white flex flex-col">

@@ -4,6 +4,7 @@ import getById from './getById';
 import getMembers from './getMembers';
 import getByName from './getByName';
 import join from './join';
+import leave from './leave';
 
 export interface RoomResponse {
   id: string;
@@ -19,4 +20,5 @@ export const roomsService = {
   getById,
   getByName,
   join,
+  leave,
 };

@@ -42,7 +42,11 @@ export default function MessageCard({ message, room }: MessageCardProps) {
       </div>
 
       {canBeDeleted && (
-        <MessageActions isOpen={isDropdownOpen} onToggle={toggleDropdown} />
+        <MessageActions
+          isOpen={isDropdownOpen}
+          onToggle={toggleDropdown}
+          id={message.id}
+        />
       )}
     </div>
   );

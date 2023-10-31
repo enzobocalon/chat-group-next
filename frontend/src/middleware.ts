@@ -13,35 +13,52 @@ export async function middleware(request: NextRequest) {
   if (!activationPaths.includes(pathname) && !pathname.startsWith('/chat')) {
     return NextResponse.next();
   }
-
   const hasToken = request.cookies.get(APP_CONFIG.ACCESS_TOKEN);
   if (hasToken && hasToken.value && hasToken.name) {
     if (isPublicRoute) {
       return NextResponse.redirect(`${baseUrl}/chat`);
     }
 
-    if (activationPaths.includes(pathname) || pathname.startsWith('/chat')) {
-      // Axios doesn't work on this context
-      const response = await fetch(
-        (process.env.NEXT_PUBLIC_API_URL + '/users/me') as string,
+    // Axios doesn't work on this context
+    const response = await fetch(
+      (process.env.NEXT_PUBLIC_API_URL + '/users/me') as string,
+      {
+        headers: {
+          Authorization: `Bearer ${hasToken.value}`,
+        },
+        method: 'GET',
+      }
+    );
+    const isValidToken = await response.json();
+    if (!isValidToken) {
+      return NextResponse.redirect(`${baseUrl}/`);
+    }
+    const userData = new Headers(request.headers);
+    userData.set('X-User', JSON.stringify(isValidToken));
+    if (pathname.includes('/chat/')) {
+      const doesRoomExist = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/rooms/${
+          pathname.split('/')[2]
+        }` as string,
         {
           headers: {
-            Authorization: `Bearer ${hasToken.value}`,
+            Authorization: `Bearer ${hasToken?.value}`,
           },
           method: 'GET',
         }
       );
-      const isValidToken = await response.json();
-      if (!isValidToken) {
-        return NextResponse.redirect(`${baseUrl}/`);
+      if (doesRoomExist.ok) {
+        return NextResponse.next({
+          headers: userData,
+        });
       }
-      const userData = new Headers(request.headers);
-      userData.set('X-User', JSON.stringify(isValidToken));
-      return NextResponse.next({
+      return NextResponse.redirect(`${baseUrl}/chat`, {
         headers: userData,
       });
     }
-    return NextResponse.next();
+    return NextResponse.next({
+      headers: userData,
+    });
   } else {
     if (isPrivateRoute) {
       return NextResponse.redirect(`${baseUrl}/`);
